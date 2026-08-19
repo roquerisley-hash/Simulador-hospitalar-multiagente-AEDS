@@ -1,0 +1,32 @@
+class Paciente {
+  
+  int id;
+  boolean ehPreferencial;
+  String senha;
+  
+  Coordenada posicao;
+  Coordenada destino;
+  
+  int saturacaoOxigenio;
+  float temperaturaCorporal;
+  int nivelDor;
+  boolean conscienciaAlterada;
+  
+  EstadoPaciente estado;
+  
+  Paciente(int id, String senha, Coordenada posicao, Coordenada destino) {
+    this.id = id;
+    this.ehPreferencial = random(1) < 0.25 ? true : false;
+    this.senha = senha;
+    
+    this.posicao = posicao.copy();
+    this.destino = destino.copy();
+    
+    saturacaoOxigenio = (int) random(70, 100);
+    temperaturaCorporal = random(34, 42);
+    nivelDor = (int) random(0, 10);
+    conscienciaAlterada = random(1) > 0.25 ? false : true;
+                          
+    this.estado = EstadoPaciente.INDO_TOTEM;
+  }
+}
