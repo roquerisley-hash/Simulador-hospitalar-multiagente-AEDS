@@ -1,3 +1,5 @@
+// base (fornecida pelo lucas) para localizar as estruturas pelo mapa
+
 class Coordenada {
   int linha;
   int coluna;
