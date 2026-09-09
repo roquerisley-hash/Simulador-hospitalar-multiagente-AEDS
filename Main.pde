@@ -33,15 +33,15 @@ void inicializarEstado() {
   tempoProximoSpawn = millisSimulacao() + gerarProximoSpawn();
 
   // Pessoa 2 — filas de triagem
-  // filaTriagemNormal = new Fila();
-  // filaTriagemPreferencial = new Fila();
+  Fila filaTriagemNormal = new Fila();
+  Fila filaTriagemPreferencial = new Fila();
 
   // Pessoa 3 — filas médicas por cor
-  // filaVermelha = new Fila();
-  // filaLaranja  = new Fila();
-  // filaAmarela  = new Fila();
-  // filaVerde    = new Fila();
-  // filaAzul     = new Fila();
+  Fila filaVermelha = new Fila();
+  Fila filaLaranja  = new Fila();
+  Fila filaAmarela  = new Fila();
+  Fila filaVerde    = new Fila();
+  Fila filaAzul     = new Fila();
 
   tempoTotalPausado = 0;
 }

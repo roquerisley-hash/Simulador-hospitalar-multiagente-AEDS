@@ -33,22 +33,19 @@ class WaveFront {
       }
     }
 
-    ListaEncadeada<Coordenada> frente =
-      new ListaEncadeada<Coordenada>();
+    FilaCoordenadas frente =
+      new FilaCoordenadas();
 
-    frente.add(origem.copy());
+    frente.enfileirar(origem.copy());
 
     distancia[origem.linha][origem.coluna] = 0;
 
-    int indiceFrente = 0;
-
     boolean encontrouDestino = false;
 
-    while (indiceFrente < frente.count()) {
+    while (!frente.vazia()) {
 
-      Coordenada atual = frente.get(indiceFrente);
-
-      indiceFrente++;
+      Coordenada atual =
+        frente.desenfileirar();
 
       if (atual.equals(destino)) {
 
@@ -72,7 +69,7 @@ class WaveFront {
         distancia[cima.linha][cima.coluna] =
           novaDistancia;
 
-        frente.add(cima);
+        frente.enfileirar(cima);
       }
 
       Coordenada baixo =
@@ -87,7 +84,7 @@ class WaveFront {
         distancia[baixo.linha][baixo.coluna] =
           novaDistancia;
 
-        frente.add(baixo);
+        frente.enfileirar(baixo);
       }
 
       Coordenada esquerda =
@@ -102,7 +99,7 @@ class WaveFront {
         distancia[esquerda.linha][esquerda.coluna] =
           novaDistancia;
 
-        frente.add(esquerda);
+        frente.enfileirar(esquerda);
       }
 
       Coordenada direita =
@@ -117,7 +114,7 @@ class WaveFront {
         distancia[direita.linha][direita.coluna] =
           novaDistancia;
 
-        frente.add(direita);
+        frente.enfileirar(direita);
       }
     }
 
@@ -140,9 +137,11 @@ class WaveFront {
     Coordenada[] caminhoTemporario =
       new Coordenada[tamanhoCaminho];
 
-    Coordenada atual = destino.copy();
+    Coordenada atual =
+      destino.copy();
 
-    int indice = tamanhoCaminho - 1;
+    int indice =
+      tamanhoCaminho - 1;
 
     caminhoTemporario[indice] =
       atual.copy();
@@ -228,10 +227,117 @@ class WaveFront {
     return caminho;
   }
 
+
+  int[][] calcularDistancias(
+    char[][] mapa,
+    Coordenada destino
+  ) {
+
+    int[][] distancia =
+      new int[mapa.length][mapa[0].length];
+
+    for (int i = 0; i < mapa.length; i++) {
+
+      for (int j = 0; j < mapa[i].length; j++) {
+
+        distancia[i][j] = -1;
+      }
+    }
+
+    if (!coordenadaValida(mapa, destino)) {
+      return distancia;
+    }
+
+    FilaCoordenadas frente =
+      new FilaCoordenadas();
+
+    frente.enfileirar(
+      destino.copy()
+    );
+
+    distancia[destino.linha][destino.coluna] = 0;
+
+    while (!frente.vazia()) {
+
+      Coordenada atual =
+        frente.desenfileirar();
+
+      int novaDistancia =
+        distancia[atual.linha][atual.coluna] + 1;
+
+      Coordenada cima =
+        new Coordenada(
+          atual.linha - 1,
+          atual.coluna
+        );
+
+      if (coordenadaValida(mapa, cima) &&
+          distancia[cima.linha][cima.coluna] == -1) {
+
+        distancia[cima.linha][cima.coluna] =
+          novaDistancia;
+
+        frente.enfileirar(cima);
+      }
+
+      Coordenada baixo =
+        new Coordenada(
+          atual.linha + 1,
+          atual.coluna
+        );
+
+      if (coordenadaValida(mapa, baixo) &&
+          distancia[baixo.linha][baixo.coluna] == -1) {
+
+        distancia[baixo.linha][baixo.coluna] =
+          novaDistancia;
+
+        frente.enfileirar(baixo);
+      }
+
+      Coordenada esquerda =
+        new Coordenada(
+          atual.linha,
+          atual.coluna - 1
+        );
+
+      if (coordenadaValida(mapa, esquerda) &&
+          distancia[esquerda.linha][esquerda.coluna] == -1) {
+
+        distancia[esquerda.linha][esquerda.coluna] =
+          novaDistancia;
+
+        frente.enfileirar(esquerda);
+      }
+
+      Coordenada direita =
+        new Coordenada(
+          atual.linha,
+          atual.coluna + 1
+        );
+
+      if (coordenadaValida(mapa, direita) &&
+          distancia[direita.linha][direita.coluna] == -1) {
+
+        distancia[direita.linha][direita.coluna] =
+          novaDistancia;
+
+        frente.enfileirar(direita);
+      }
+    }
+
+    return distancia;
+  }
+
+
   boolean coordenadaValida(
     char[][] mapa,
     Coordenada coordenada
   ) {
+
+    if (coordenada == null) {
+      return false;
+    }
 
     if (coordenada.linha < 0) {
       return false;
@@ -250,6 +356,14 @@ class WaveFront {
     }
 
     if (mapa[coordenada.linha][coordenada.coluna] == '#') {
+      return false;
+    }
+
+    if (mapa[coordenada.linha][coordenada.coluna] == 'E') {
+      return false;
+    }
+
+    if (mapa[coordenada.linha][coordenada.coluna] == 'M') {
       return false;
     }
 
