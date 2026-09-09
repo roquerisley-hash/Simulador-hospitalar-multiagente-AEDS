@@ -27,6 +27,10 @@ Coordenada[] medicos = new Coordenada[50];
 int qtdMedicos = 0;
 
 color corChao, corParede, corGerador, corRemovedor, corTotem, corAssento, corEnfermeiro, corMedico, corGrade, corPacienteNormal, corPacientePreferencial;
+color corManchesterVermelho, corManchesterLaranja, corManchesterAmarelo, corManchesterVerde, corManchesterAzul;
+
+// alpha usado na camada de cor de Manchester sobre o sprite do paciente (0-255)
+final int ALPHA_MANCHESTER = 130;
 
 // sprites (usados no lugar dos quadrados coloridos quando disponíveis)
 PImage imgChao, imgParede, imgAssento, imgTotem, imgGerador, imgRemovedor, imgMedico, imgEnfermeiro, imgPacienteNormal, imgPacientePreferencial;
@@ -43,6 +47,44 @@ void inicializarCoresMapa() {
   corGrade      = color(175, 151, 112);
   corPacienteNormal = color(45, 125, 230);
   corPacientePreferencial = color(155, 75, 180);
+
+  corManchesterVermelho = color(220, 30, 30);
+  corManchesterLaranja  = color(240, 130, 20);
+  corManchesterAmarelo  = color(235, 210, 20);
+  corManchesterVerde    = color(30, 160, 60);
+  corManchesterAzul     = color(30, 100, 220);
+}
+
+// mapeia a String retornada por Manchester.classificar(...) para a cor
+// correspondente, já com o alpha usado na sobreposição sobre o sprite
+color corDaClassificacaoManchester(String classificacao) {
+  if (classificacao == null) {
+    return color(0, 0, 0, 0);
+  }
+
+  color base;
+
+  switch (classificacao) {
+    case "VERMELHO":
+      base = corManchesterVermelho;
+      break;
+    case "LARANJA":
+      base = corManchesterLaranja;
+      break;
+    case "AMARELO":
+      base = corManchesterAmarelo;
+      break;
+    case "VERDE":
+      base = corManchesterVerde;
+      break;
+    case "AZUL":
+      base = corManchesterAzul;
+      break;
+    default:
+      return color(0, 0, 0, 0);
+  }
+
+  return color(red(base), green(base), blue(base), ALPHA_MANCHESTER);
 }
 
 void inicializarSpritesMapa() {

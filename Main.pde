@@ -240,6 +240,7 @@ void processarChegadas() {
         p.posicao.equals(p.destino)) {
 
       String cor = manchester.classificar(p);
+      p.classificacaoManchester = cor;
 
       atendimentoMedico.adicionarPaciente(p, cor);
 
