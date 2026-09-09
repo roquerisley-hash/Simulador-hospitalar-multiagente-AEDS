@@ -42,7 +42,8 @@ class MovimentoMultiagente {
       }
     }
 
-
+    delay(250);
+    
     for (int i = 0; i < quantidade; i++) {
 
       if (podeMover[i] && intencoes[i] != null) {

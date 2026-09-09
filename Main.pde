@@ -25,6 +25,8 @@ void setup() {
 
 void carregarAssets() {
   inicializarCoresMapa();
+  inicializarSpritesMapa();
+  inicializarSpritesPacientes();
   listarMapas();
 }
 
@@ -342,20 +344,9 @@ void desenharSimulacao() {
 }
 
 void desenharPacientes() {
-  for (int i = 0; i < pacientes.count(); i++) {
-    Paciente p = pacientes.get(i);
-
-    float x = origemX + p.posicao.coluna * tamanhoCelula + tamanhoCelula / 2;
-    float y = origemY + p.posicao.linha * tamanhoCelula + tamanhoCelula / 2;
-
-    if (p.ehPreferencial) {
-      fill(155, 75, 180);
-    } else {
-      fill(45, 125, 230);
-    }
-
-    noStroke();
-    ellipse(x, y, tamanhoCelula * 0.55, tamanhoCelula * 0.55);
+  int total = pacientes.count();
+  for (int i = 0; i < total; i++) {
+    pacientes.get(i).desenhar();
   }
 }
 

@@ -1,4 +1,3 @@
-
 final int MARGEM = 20;
 final int ALTURA_CABECALHO = 20;
 final int LARGURA_LEGENDA = 245;
@@ -27,7 +26,10 @@ int qtdEnfermeiros = 0;
 Coordenada[] medicos = new Coordenada[50];
 int qtdMedicos = 0;
 
-color corChao, corParede, corGerador, corRemovedor, corTotem, corAssento, corEnfermeiro, corMedico, corGrade;
+color corChao, corParede, corGerador, corRemovedor, corTotem, corAssento, corEnfermeiro, corMedico, corGrade, corPacienteNormal, corPacientePreferencial;
+
+// sprites (usados no lugar dos quadrados coloridos quando disponíveis)
+PImage imgChao, imgParede, imgAssento, imgTotem, imgGerador, imgRemovedor, imgMedico, imgEnfermeiro, imgPacienteNormal, imgPacientePreferencial;
 
 void inicializarCoresMapa() {
   corChao       = color(239, 229, 194);
@@ -39,6 +41,24 @@ void inicializarCoresMapa() {
   corEnfermeiro = color(35);
   corMedico     = color(250, 205, 20);
   corGrade      = color(175, 151, 112);
+  corPacienteNormal = color(45, 125, 230);
+  corPacientePreferencial = color(155, 75, 180);
+}
+
+void inicializarSpritesMapa() {
+  imgChao = loadImage("SpritesHospital/chão.png");
+  imgParede = loadImage("SpritesHospital/parede.png");
+  imgAssento = loadImage("SpritesHospital/assento.png");
+  imgTotem = loadImage("SpritesHospital/totem.png");
+  imgGerador = loadImage("SpritesHospital/gerador.png");
+  imgRemovedor = loadImage("SpritesHospital/removedor.png");
+  imgMedico = loadImage("SpritesHospital/medico.png");
+  imgEnfermeiro = loadImage("SpritesHospital/enfermeiro.png");
+}
+
+void inicializarSpritesPacientes() {
+  imgPacienteNormal = loadImage("SpritesHospital/paciente.png");
+  imgPacientePreferencial = loadImage("SpritesHospital/pacientePrioridade.png");
 }
 
 void carregarMapa(String arquivo) {
@@ -179,16 +199,61 @@ void desenharMapa() {
       float x = origemX + j * tamanhoCelula;
       float y = origemY + i * tamanhoCelula;
 
-      fill(corDaCelula(tipo));
-      rect(x, y, tamanhoCelula, tamanhoCelula);
-
-      if (tipo != '.' && tipo != '#') {
-        desenharSimbolo(tipo, x, y);
-      }
+      desenharCelula(tipo, x, y);
     }
   }
 
   desenharLegenda();
+}
+
+// desenha o chão em toda célula primeiro, depois o sprite
+// específico do tipo por cima (se houver)
+void desenharCelula(char tipo, float x, float y) {
+  noStroke();
+
+  // chão em todas as células
+  if (imgChao != null) {
+    image(imgChao, x, y, tamanhoCelula, tamanhoCelula);
+  } else {
+    fill(corChao);
+    rect(x, y, tamanhoCelula, tamanhoCelula);
+  }
+
+  // camada 2: sprite específico (ou fallback colorido) por cima do chão
+  if (tipo != '.') {
+    PImage sprite = spriteDaCelula(tipo);
+
+    if (sprite != null) {
+      image(sprite, x, y, tamanhoCelula, tamanhoCelula);
+    } else {
+      fill(corDaCelula(tipo));
+      rect(x, y, tamanhoCelula, tamanhoCelula);
+      if (tipo != '#') {
+        desenharSimbolo(tipo, x, y);
+      }
+    }
+  }
+}
+
+PImage spriteDaCelula(char tipo) {
+  switch (tipo) {
+    case '#':
+      return imgParede;
+    case 'G':
+      return imgGerador;
+    case 'R':
+      return imgRemovedor;
+    case 'T':
+      return imgTotem;
+    case 'A':
+      return imgAssento;
+    case 'E':
+      return imgEnfermeiro;
+    case 'M':
+      return imgMedico;
+    default:
+      return null;
+  }
 }
 
 color corDaCelula(char tipo) {
@@ -252,36 +317,48 @@ void desenharLegenda() {
   itemLegenda(x, y, 'M', "Médico", corMedico);
 
   y += 44;
-  fill(45, 125, 230);
-  noStroke();
-  ellipse(x + 10, y + 10, 18, 18);
-  fill(55);
-  textAlign(LEFT, CENTER);
-  textSize(13);
-  text("Paciente normal", x + 28, y + 10);
-
+  itemLegendaPaciente(x, y, imgPacienteNormal, corPacienteNormal, "Paciente normal");
   y += 30;
-  fill(155, 75, 180);
-  noStroke();
-  ellipse(x + 10, y + 10, 18, 18);
-  fill(55);
-  text("Paciente preferencial", x + 28, y + 10);
+  itemLegendaPaciente(x, y, imgPacientePreferencial, corPacientePreferencial, "Paciente preferencial");
 }
 
 void itemLegenda(float x, float y, char simbolo, String descricao, color cor) {
-  stroke(80);
-  fill(cor);
-  rect(x, y, 21, 21);
+  PImage sprite = spriteDaCelula(simbolo);
 
-  fill(simbolo == 'M' ? 35 : 255);
-  textAlign(CENTER, CENTER);
-  textSize(11);
-  text(str(simbolo), x + 10.5, y + 10);
+  if (sprite != null) {
+    noStroke();
+    image(sprite, x, y, 21, 21);
+  } else {
+    stroke(80);
+    fill(cor);
+    rect(x, y, 21, 21);
+
+    fill(simbolo == 'M' ? 35 : 255);
+    textAlign(CENTER, CENTER);
+    textSize(11);
+    text(str(simbolo), x + 10.5, y + 10);
+  }
 
   fill(55);
   textAlign(LEFT, CENTER);
   textSize(13);
   text(descricao, x + 31, y + 10);
+}
+
+void itemLegendaPaciente(float x, float y, PImage sprite, color cor, String descricao) {
+  if (sprite != null) {
+    noStroke();
+    image(sprite, x, y, 21, 21);
+  } else {
+    fill(cor);
+    noStroke();
+    ellipse(x + 10, y + 10, 18, 18);
+  }
+
+  fill(55);
+  textAlign(LEFT, CENTER);
+  textSize(13);
+  text(descricao, x + 28, y + 10);
 }
 
 void desenharErro() {
