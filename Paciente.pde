@@ -34,4 +34,19 @@ class Paciente {
                           
     this.estado = EstadoPaciente.INDO_TOTEM;
   }
+
+  void desenhar() {
+    float x = origemX + posicao.coluna * tamanhoCelula;
+    float y = origemY + posicao.linha * tamanhoCelula;
+
+    PImage sprite = ehPreferencial ? imgPacientePreferencial : imgPacienteNormal;
+
+    if (sprite != null) {
+      image(sprite, x, y, tamanhoCelula, tamanhoCelula);
+    } else {
+      noStroke();
+      fill(ehPreferencial ? corPacientePreferencial : corPacienteNormal);
+      ellipse(x + tamanhoCelula / 2.0, y + tamanhoCelula / 2.0, tamanhoCelula * 0.55, tamanhoCelula * 0.55);
+    }
+  }
 }
