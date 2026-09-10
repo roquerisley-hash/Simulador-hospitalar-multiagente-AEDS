@@ -13,6 +13,10 @@ class Paciente {
   boolean conscienciaAlterada;
   
   EstadoPaciente estado;
+
+  // preenchido quando o paciente passa pela classificação de Manchester
+  // (null antes disso — ainda não tem cor de prioridade médica)
+  String classificacaoManchester = null;
   
   Paciente(int id, int numNormal, int numPreferencial, Coordenada posicao, Coordenada destino) {
     this.id = id;
@@ -47,6 +51,12 @@ class Paciente {
       noStroke();
       fill(ehPreferencial ? corPacientePreferencial : corPacienteNormal);
       ellipse(x + tamanhoCelula / 2.0, y + tamanhoCelula / 2.0, tamanhoCelula * 0.55, tamanhoCelula * 0.55);
+    }
+
+    if (classificacaoManchester != null) {
+      noStroke();
+      fill(corDaClassificacaoManchester(classificacaoManchester));
+      rect(x, y, tamanhoCelula, tamanhoCelula);
     }
   }
 }
